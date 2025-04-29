@@ -1,113 +1,201 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, FlatList, TouchableOpacity, Image, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Button,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 
 const EQUIPMENT_LIST = [
-  { id: '1', name: 'Tractor', category: 'Tractors', price: '₹1000/day', image: 'https://via.placeholder.com/150' },
-  { id: '2', name: 'Power Weeder', category: 'Weeders', price: '₹500/day', image: 'https://via.placeholder.com/150' },
-  { id: '3', name: 'Lawn Mower', category: 'Mowers', price: '₹700/day', image: 'https://via.placeholder.com/150' },
-  { id: '4', name: 'Sprayer', category: 'Sprayers', price: '₹300/day', image: 'https://via.placeholder.com/150' },
-  { id: '5', name: 'Earth Auger', category: 'Tools', price: '₹400/day', image: 'https://via.placeholder.com/150' },
+  { 
+    id: '1', 
+    name: 'Stihl Bc 230', 
+    price: 500, 
+    image: require('../assets/Images/PowerWeeder/bc230.jpg'), 
+    category: 'Tractors',
+    description: 'High-performance power weeder ideal for small and medium farms.',
+    moreImages: [
+      require('../assets/Images/PowerWeeder/bc230.jpg'),
+      require('../assets/Images/PowerWeeder/bc230.jpg'),
+    ],
+    videos: ['https://www.example.com/video1.mp4'],
+  },
+  { 
+    id: '2', 
+    name: 'Cub Cadet 750', 
+    price: 600, 
+    image: require('../assets/Images/PowerWeeder/ft750.png'), 
+    category: 'Weeders', 
+    description: 'Reliable and efficient weeder for tough soil conditions.',
+    moreImages: [
+      require('../assets/Images/PowerWeeder/ft750.png'),
+      require('../assets/Images/PowerWeeder/ft750.png'),
+    ],
+    videos: ['https://www.example.com/video1.mp4'],
+  },
+  { 
+    id: '3', 
+    name: 'Stihl Mh 710', 
+    price: 700, 
+    image: require('../assets/Images/PowerWeeder/mh710.jpg'), 
+    category: 'Mowers',
+    description: 'Heavy-duty machine designed for deep tillage and soil preparation.',
+    moreImages: [
+      require('../assets/Images/PowerWeeder/mh710.jpg'),
+      require('../assets/Images/PowerWeeder/mh710.jpg'),
+    ],
+    videos: ['https://www.example.com/video1.mp4'],
+  },
+  { 
+    id: '4', 
+    name: 'Husqvarna 545', 
+    price: 750, 
+    image: require('../assets/Images/PowerWeeder/tf5451.png'), 
+    category: 'Sprayers',
+    description: 'Powerful and compact weeder for efficient field operations.',
+    moreImages: [
+      require('../assets/Images/PowerWeeder/tf5451.png'),
+      require('../assets/Images/PowerWeeder/tf5451.png'),
+    ],
+    videos: ['https://www.example.com/video1.mp4'],
+  },
+  { 
+    id: '5', 
+    name: 'Husqvarna 120', 
+    price: 800, 
+    image: require('../assets/Images/PowerWeeder/tf120.png'), 
+    category: 'Tools',
+    description: 'Compact and lightweight weeder, perfect for home gardens.',
+    moreImages: [
+      require('../assets/Images/PowerWeeder/tf120.png'),
+      require('../assets/Images/PowerWeeder/tf120.png'),
+    ],
+    videos: ['https://www.example.com/video1.mp4'],
+  },
+  { 
+    id: '6', 
+    name: 'Sharpex 18 inch', 
+    price: 300, 
+    image: require('../assets/Images/LawnMowers/spx2.jpg'), 
+    category: 'Mowers',
+    description: 'Durable and efficient 18-inch manual lawn mower.',
+    moreImages: [
+      require('../assets/Images/LawnMowers/spx2.jpg'),
+      require('../assets/Images/LawnMowers/spx2.jpg'),
+    ],
+    videos: ['https://www.example.com/video1.mp4'],
+  },
 ];
+
+const CATEGORIES = ['All', 'Tractors', 'Weeders', 'Mowers', 'Sprayers', 'Tools'];
 
 export default function AgroRent() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [filteredEquipment, setFilteredEquipment] = useState(EQUIPMENT_LIST);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const [isRentingOwn, setIsRentingOwn] = useState(false);
+
   const [equipmentName, setEquipmentName] = useState('');
   const [equipmentCategory, setEquipmentCategory] = useState('');
   const [equipmentPrice, setEquipmentPrice] = useState('');
   const [equipmentDescription, setEquipmentDescription] = useState('');
-  const [equipmentImage, setEquipmentImage] = useState(null);
 
-  // Filter equipment based on search query and category
   const filterEquipment = () => {
-    const filtered = EQUIPMENT_LIST.filter(item => {
+    return EQUIPMENT_LIST.filter(item => {
       const matchesQuery = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = selectedCategory ? item.category === selectedCategory : true;
+      const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
       return matchesQuery && matchesCategory;
     });
-    setFilteredEquipment(filtered);
   };
 
-  // Handle equipment booking
-  const handleBookNow = (equipmentName) => {
-    Alert.alert('Booking Confirmation', `You have booked the ${equipmentName}.`, [
-      { text: 'OK', onPress: () => console.log('Booked') },
-    ]);
+  const handleBookNow = (name) => {
+    Alert.alert('Booked!', `You've booked the ${name}.`);
   };
 
-  // Handle renting own equipment
-  const handleRentOwnEquipment = () => {
+  const handleRentSubmit = () => {
     if (!equipmentName || !equipmentCategory || !equipmentPrice || !equipmentDescription) {
-      Alert.alert('Error', 'Please fill out all the fields before submitting.');
+      Alert.alert('Please fill in all fields');
       return;
     }
-
-    Alert.alert('Rent Your Equipment', `Your ${equipmentName} is now available for rent!`, [
-      { text: 'OK', onPress: () => console.log('Equipment rented') },
-    ]);
-
-    // Reset the form
+    Alert.alert('Success', `Your equipment "${equipmentName}" is now listed!`);
     setEquipmentName('');
     setEquipmentCategory('');
     setEquipmentPrice('');
     setEquipmentDescription('');
-    setEquipmentImage(null);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>🚜 AgroRent – Equipment Rentals</Text>
+      <Text style={styles.title}>🚜 AgroRent Equipment Rentals</Text>
 
-      {/* Toggle Rent or Book Mode */}
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity style={[styles.toggleBtn, !isRentingOwn && styles.activeToggle]} onPress={() => setIsRentingOwn(false)}>
+      <View style={styles.toggleGroup}>
+        <TouchableOpacity
+          style={[styles.toggleButton, !isRentingOwn && styles.toggleActive]}
+          onPress={() => setIsRentingOwn(false)}>
           <Text style={styles.toggleText}>Book Equipment</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.toggleBtn, isRentingOwn && styles.activeToggle]} onPress={() => setIsRentingOwn(true)}>
+        <TouchableOpacity
+          style={[styles.toggleButton, isRentingOwn && styles.toggleActive]}
+          onPress={() => setIsRentingOwn(true)}>
           <Text style={styles.toggleText}>Rent Your Equipment</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Search Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Search Equipment"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-      />
-      <Button title="Search" onPress={filterEquipment} />
+      {!isRentingOwn ? (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Search equipment"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
 
-      {/* Category Filter */}
-      <View style={styles.categoryFilter}>
-        <Text style={styles.filterText}>Filter by Category:</Text>
-        <TouchableOpacity onPress={() => setSelectedCategory('')} style={styles.categoryBtn}>
-          <Text style={styles.categoryText}>All</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedCategory('Tractors')} style={styles.categoryBtn}>
-          <Text style={styles.categoryText}>Tractors</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedCategory('Weeders')} style={styles.categoryBtn}>
-          <Text style={styles.categoryText}>Weeders</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedCategory('Mowers')} style={styles.categoryBtn}>
-          <Text style={styles.categoryText}>Mowers</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedCategory('Sprayers')} style={styles.categoryBtn}>
-          <Text style={styles.categoryText}>Sprayers</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setSelectedCategory('Tools')} style={styles.categoryBtn}>
-          <Text style={styles.categoryText}>Tools</Text>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.categories}>
+            {CATEGORIES.map(cat => (
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  styles.categoryButton,
+                  selectedCategory === cat && styles.categoryActive,
+                ]}
+                onPress={() => setSelectedCategory(cat)}>
+                <Text
+                  style={[
+                    styles.categoryText,
+                    selectedCategory === cat && styles.categoryTextActive,
+                  ]}>
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-      {/* Display Either Renting or Booking */}
-      {isRentingOwn ? (
-        <View style={styles.rentSection}>
-          <Text style={styles.rentTitle}>List Your Equipment for Rent</Text>
-          
-          {/* Equipment Rent Form */}
+          <FlatList
+            data={filterEquipment()}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Image source={item.image} style={styles.image} />
+                <View style={styles.cardContent}>
+                  <Text style={styles.name}>{item.name}</Text>
+                  <Text style={styles.price}>{item.price}</Text>
+                  <TouchableOpacity
+                    style={styles.bookBtn}
+                    onPress={() => handleBookNow(item.name)}>
+                    <Text style={styles.bookText}>Book Now</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          />
+        </>
+      ) : (
+        <View style={styles.form}>
+          <Text style={styles.formTitle}>Rent Out Your Equipment</Text>
           <TextInput
             style={styles.input}
             placeholder="Equipment Name"
@@ -122,7 +210,7 @@ export default function AgroRent() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Price (₹)"
+            placeholder="Price per day (₹)"
             value={equipmentPrice}
             onChangeText={setEquipmentPrice}
             keyboardType="numeric"
@@ -133,107 +221,88 @@ export default function AgroRent() {
             value={equipmentDescription}
             onChangeText={setEquipmentDescription}
           />
-          
-          {/* Image Upload Button (Currently a placeholder) */}
-          <TouchableOpacity style={styles.uploadBtn} onPress={() => alert('Image upload feature coming soon')}>
-            <Text style={styles.uploadBtnText}>Upload Equipment Image</Text>
+          <TouchableOpacity
+            style={styles.uploadBtn}
+            onPress={() => Alert.alert('Coming Soon', 'Image upload will be added soon.')}>
+            <Text style={styles.uploadText}>Upload Image</Text>
           </TouchableOpacity>
-
-          {/* Submit Button */}
-          <Button title="List Equipment" onPress={handleRentOwnEquipment} />
+          <Button title="Submit Listing" onPress={handleRentSubmit} />
         </View>
-      ) : (
-        <FlatList
-          data={filteredEquipment}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.equipmentItem}>
-              <Image source={{ uri: item.image }} style={styles.equipmentImage} />
-              <View style={styles.equipmentDetails}>
-                <Text style={styles.equipmentName}>{item.name}</Text>
-                <Text style={styles.equipmentPrice}>{item.price}</Text>
-                <TouchableOpacity
-                  style={styles.bookBtn}
-                  onPress={() => handleBookNow(item.name)}>
-                  <Text style={styles.bookBtnText}>Book Now</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-        />
       )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#e3f2fd' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, color: '#388E3C' },
+  container: { flex: 1, backgroundColor: '#f4f6f8', padding: 16 },
+  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20, color: '#2e7d32' },
+
+  toggleGroup: { flexDirection: 'row', marginBottom: 20, justifyContent: 'space-between' },
+  toggleButton: {
+    flex: 1,
+    backgroundColor: '#c8e6c9',
+    padding: 12,
+    marginHorizontal: 5,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  toggleActive: {
+    backgroundColor: '#66bb6a',
+  },
+  toggleText: { color: '#fff', fontWeight: 'bold' },
+
   input: {
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 12,
     borderRadius: 8,
-    marginBottom: 15,
+    marginBottom: 12,
+    borderColor: '#ddd',
+    borderWidth: 1,
   },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 20,
+
+  categories: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
+  categoryButton: {
+    backgroundColor: '#e0e0e0',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    margin: 4,
   },
-  toggleBtn: {
-    backgroundColor: '#388E3C',
-    paddingVertical: 10,
-    borderRadius: 5,
-    width: '40%',
-    alignItems: 'center',
-  },
-  activeToggle: {
-    backgroundColor: '#43a047',
-  },
-  toggleText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  categoryFilter: { flexDirection: 'row', marginBottom: 20, justifyContent: 'space-between' },
-  filterText: { fontSize: 16, color: '#388E3C' },
-  categoryBtn: {
-    backgroundColor: '#388E3C',
-    padding: 10,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  categoryText: { color: '#fff', fontWeight: 'bold' },
-  rentSection: { backgroundColor: '#fff', padding: 20, borderRadius: 10, marginTop: 30 },
-  rentTitle: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, color: '#388E3C' },
-  uploadBtn: {
-    backgroundColor: '#43a047',
-    paddingVertical: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-    alignItems: 'center',
-  },
-  uploadBtnText: { color: '#fff', fontWeight: 'bold' },
-  equipmentItem: {
+  categoryActive: { backgroundColor: '#66bb6a' },
+  categoryText: { color: '#555' },
+  categoryTextActive: { color: '#fff', fontWeight: 'bold' },
+
+  card: {
     flexDirection: 'row',
     backgroundColor: '#fff',
-    padding: 15,
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 15,
+    padding: 10,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.05,
     shadowRadius: 5,
-    elevation: 3,
+    elevation: 2,
   },
-  equipmentImage: { width: 100, height: 100, borderRadius: 8, marginRight: 15 },
-  equipmentDetails: { flex: 1 },
-  equipmentName: { fontSize: 18, fontWeight: 'bold' },
-  equipmentPrice: { fontSize: 16, color: '#388E3C' },
+  image: { width: 90, height: 90, borderRadius: 8, marginRight: 12 },
+  cardContent: { flex: 1 },
+  name: { fontSize: 16, fontWeight: '600' },
+  price: { fontSize: 14, color: '#2e7d32', marginVertical: 4 },
   bookBtn: {
-    backgroundColor: '#388E3C',
+    backgroundColor: '#43a047',
     paddingVertical: 8,
-    borderRadius: 5,
-    marginTop: 10,
+    borderRadius: 6,
+    alignItems: 'center',
   },
-  bookBtnText: { color: '#fff', fontWeight: 'bold' },
-});
+  bookText: { color: '#fff', fontWeight: 'bold' },
 
+  form: { backgroundColor: '#fff', padding: 20, borderRadius: 10, marginTop: 10 },
+  formTitle: { fontSize: 18, fontWeight: 'bold', color: '#2e7d32', marginBottom: 12 },
+  uploadBtn: {
+    backgroundColor: '#81c784',
+    padding: 10,
+    borderRadius: 6,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  uploadText: { color: '#fff', fontWeight: 'bold' },
+});
